@@ -8,12 +8,33 @@ output:
 
 ## Loading and preprocessing the data
 
-```{R}
+```{r}
+require(ggplot2) 
+require(plyr)
+require(graphics)
+
 fileRead <- read.csv('activity.csv', header = TRUE, na.strings = "NA") 
-summary(fileRead)
+dayAggregate <- na.omit(aggregate(fileRead$steps, list(date = fileRead$date), sum))
+colnames(dayAggregate) <- c("dates", "steps")
+summary(dayAggregate)
+
 ```
+
 ## What is mean total number of steps taken per day?
 
+```{r}
+dayAggregate$dates <- as.Date(dayAggregate$dates, "%Y-%m-%d")
+
+dayAggregate$steps <- as.numeric(dayAggregate$steps)
+
+#head(dayAggregate)
+
+#lapply(dayAggregate,colnames)
+
+dates <- dayAggregate$dates
+steps <- dayAggregate$steps
+qplot(dates, steps)
+```
 
 
 ## What is the average daily activity pattern?
