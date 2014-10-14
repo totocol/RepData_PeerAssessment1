@@ -13,10 +13,10 @@ require(ggplot2)
 require(plyr)
 require(graphics)
 
-fileRead <- read.csv('activity.csv', header = TRUE, na.strings = "NA") 
-dayAggregate <- na.omit(aggregate(fileRead$steps, list(date = fileRead$date), sum))
+fileRead <- na.omit(read.csv('activity.csv', header = TRUE, na.strings = "NA"))
+dayAggregate <- aggregate(fileRead$steps, list(date = fileRead$date), sum)
 colnames(dayAggregate) <- c("dates", "steps")
-summary(dayAggregate)
+
 
 ```
 
@@ -34,14 +34,25 @@ dayAggregate$steps <- as.numeric(dayAggregate$steps)
 dates <- dayAggregate$dates
 steps <- dayAggregate$steps
 qplot(dates, steps)
+summary(dayAggregate)
 ```
 
 
 ## What is the average daily activity pattern?
+```{r}
+stepAggregate <- aggregate(fileRead$steps, list(interval = fileRead$interval), mean)
+colnames(stepAggregate) <- c("interval", "averageSteps")
+plot(stepAggregate$interval, stepAggregate$averageSteps, type="l", xlab = "5-minute intervals", ylab = "Average number of steps taken")
+summary(stepAggregate)
+aggregate(stepAggregate$interval, list(averageSteps = stepAggregate$averageSteps, max))
+maximumAverage <- arrange(stepAggregate, stepAggregate$averageSteps, decreasing = TRUE)
+head(maximumAverage,1)
+```
 
 
 
 ## Imputing missing values
+
 
 
 
