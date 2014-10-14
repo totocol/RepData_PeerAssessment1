@@ -40,20 +40,29 @@ summary(dayAggregate)
 
 ## What is the average daily activity pattern?
 ```{r}
-stepAggregate <- aggregate(fileRead$steps, list(interval = fileRead$interval), mean)
+stepAggregate <- aggregate(fileRead$steps, list(interval = fileRead$interval), FUN = "mean")
 colnames(stepAggregate) <- c("interval", "averageSteps")
 plot(stepAggregate$interval, stepAggregate$averageSteps, type="l", xlab = "5-minute intervals", ylab = "Average number of steps taken")
 summary(stepAggregate)
-aggregate(stepAggregate$interval, list(averageSteps = stepAggregate$averageSteps, max))
+#aggregate(stepAggregate$interval, list(averageSteps = stepAggregate$averageSteps, max))
 maximumAverage <- arrange(stepAggregate, stepAggregate$averageSteps, decreasing = TRUE)
 head(maximumAverage,1)
+
 ```
 
 
 
 ## Imputing missing values
+```{r}
+missingValues <- read.csv('activity.csv', header = TRUE, na.strings = "NA")
+sum(is.na(missingValues))
+
+
+```
 
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
