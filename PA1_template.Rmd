@@ -7,11 +7,11 @@ output:
 
 #### This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day. 
 
-##### Through this research we are attempting to use the existing data to 
+#### Through this research we are attempting to use the existing data to analyse patterns through the whole time the data was collected, specific periods as well as daily patterns. In order to ensure reproducibility, all code used to reach the results is made available and the dataset can be obtained from: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip 
 
 ## Loading and preprocessing the data
 
-
+#### The first step needed is to read the data, eliminate the data that is not available and prepare the data for the analysis. 
 
 ```{r,echo=TRUE }
 require(ggplot2) 
@@ -32,36 +32,50 @@ dayAggregate$dates <- as.Date(dayAggregate$dates, "%Y-%m-%d") # we first ensure 
 dayAggregate$steps <- as.numeric(dayAggregate$steps) # and we also ensure is can be treated as numbers
 dates <- dayAggregate$dates # we then fix the columns
 steps <- dayAggregate$steps
-qplot(dates, steps, geom = "auto") #to finally be able to graph the total mean number of steps per day
+qplot(dates, steps) #to finally be able to graph the total mean number of steps per day
 summary(dayAggregate)
 ```
 
-#### AS seen in the 
+#### As seen in the graph above, the subject of study did not present a major change of trend in the total number of stpes per day during the time the data was analysed. It is however observed that there are some isolated days in which the level of activity increased or decresed dratically for which we will need to do further data analysis.  
 
 
 ## What is the average daily activity pattern?
 ```{r,echo=TRUE}
-stepAggregate <- aggregate(fileRead$steps, list(interval = fileRead$interval), FUN = "mean")
-colnames(stepAggregate) <- c("interval", "averageSteps")
-plot(stepAggregate$interval, stepAggregate$averageSteps, type="l", xlab = "5-minute intervals", ylab = "Average number of steps taken")
+stepAggregate <- aggregate(fileRead$steps, list(interval = fileRead$interval), FUN = "mean") # Calculate the mean per interval
+colnames(stepAggregate) <- c("interval", "averageSteps") 
+plot(stepAggregate$interval, stepAggregate$averageSteps, type="l", xlab = "5-minute intervals", ylab = "Average number of steps taken") #plot the results 
 summary(stepAggregate)
-#aggregate(stepAggregate$interval, list(averageSteps = stepAggregate$averageSteps, max))
-maximumAverage <- arrange(stepAggregate, stepAggregate$averageSteps, decreasing = TRUE)
-head(maximumAverage,1)
+maximumAverage <- arrange(stepAggregate, stepAggregate$averageSteps, decreasing = TRUE) # reorganise the results  
+head(maximumAverage,1) # Display the result 
 
 ```
 
-
+#### As seen in the daily activity pattern, we can observe that after a slow start, at 835 minute interval, the number of steps has its maximum value 
 
 ## Imputing missing values
 ```{r,echo=TRUE}
-missingValues <- read.csv('activity.csv', header = TRUE, na.strings = "NA")
-sum(is.na(missingValues))
+missingValues <- read.csv('activity.csv', header = TRUE, na.strings = "NA") #Read file again
+sum(is.na(missingValues)) #count the number of missing values 
+
+# missingValues$steps[is.na(missingValues$steps)] <- with(missingValues, ave(steps, interval, FUN = function(x) median(x, na.rm = TRUE)))[is.na(missingValues$steps)]
+
+# Replace NA values with the median number of steps 
+newValues <- as.data.frame(ddply(missingValues, .(interval), transform, steps=ifelse(is.na(steps), median(steps, na.rm=TRUE), steps))) 
+
+# Aggregate per date
+newAggregate <- aggregate(newValues$steps, list(date = newValues$date), sum) 
+colnames(newAggregate) <- c("dates2", "steps2")
+dates2 <- newAggregate$dates2
+steps2 <- newAggregate$steps2
+
+# And plot new graph
+qplot(dates2, steps2)
+
 
 
 ```
 
-
+#### As it can in the plot above, there isn't a major difference between the results in the number of steps taken per day if the NA values are replaced with the media of the number of steps per interval 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
