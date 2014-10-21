@@ -56,7 +56,7 @@ dayAggregate$dates <- as.Date(dayAggregate$dates, "%Y-%m-%d") # we first ensure 
 dayAggregate$steps <- as.numeric(dayAggregate$steps) # and we also ensure is can be treated as numbers
 dates <- dayAggregate$dates # we then fix the columns
 steps <- dayAggregate$steps
-qplot(dates, steps) #to finally be able to graph the total mean number of steps per day
+hist(dayAggregate$steps, col="red") #to finally be able to graph the total mean number of steps per day
 ```
 
 ![plot of chunk unnamed-chunk-2](./PA1_template_files/figure-html/unnamed-chunk-2.png) 
@@ -138,7 +138,7 @@ dates2 <- newAggregate$dates2
 steps2 <- newAggregate$steps2
 
 # And plot new graph
-qplot(dates2, steps2)
+hist(newAggregate$steps2, col="red")
 ```
 
 ![plot of chunk unnamed-chunk-4](./PA1_template_files/figure-html/unnamed-chunk-4.png) 
